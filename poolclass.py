@@ -9,13 +9,14 @@ Created on Mon May  3 16:13:40 2021
 import parse_code
 
 class Pool():
-  def __init__(self,startaddr,size,imagebase):
+  def __init__(self,startaddr = 0,size = 0,imagebase = 0):
     self.startaddr = startaddr # 起始地址
     self.size = size # 大小字节
     self.endaddr = self.startaddr + size -1 # 结束地址
     self.blocksize = self.size/4 # 大小为字
     self.imagebase = imagebase # image偏移
     self.displaymod = 'virtual' #显示的是虚拟地址还是实际地址,默认是virtual
+    self.typename = 'org' # 类型，org原生，‘code’代码池，‘literal’文字池
     
 #    self.newstartaddr = 
 #    self.newendaddr = 
@@ -70,26 +71,30 @@ class Pool():
 # 加上读写的函数
   
 class literalPool(Pool):
-  def __init__(self,startaddr,size,imagebase):
+  def __init__(self,startaddr = 0,size = 0,imagebase = 0):
     super().__init__(startaddr,size,imagebase)
     self.changebit = 0 # 位置是否切换
     self.newstartaddr = 0 # 新起始的地址
     self.newendaddr = 0 # 新结束地址
+    self.typename = 'literal'
+    self.clist = [] # 放着对应codepool的列表，考虑到可能多个codepool对应literalpool所以为列表
 #    self.type = '' # 由tail，head，mid三种类型，对应在func的尾部，头部，中间
      #所处函数块
 
   def displayMsg(self): #显示各种信息
     super().displayMsg()
     print('changed?:',self.changebit,'newstartaddr:',self.newstartaddr,'newendaddr',self.newendaddr)
-    print('type:',self.type)
+    print('typename:',self.typename)
 
 class codePool(Pool):
-  def __init__(self,startaddr,size,imagebase):
+  def __init__(self,startaddr = 0,size = 0,imagebase = 0):
     super().__init__(startaddr,size,imagebase)
     self.ldraddrlist = [] #在本codePool中ldr指令的地址集合
     self.changebit = 0 # 位置是否切换
     self.newstartaddr = 0 # 新起始的地址
     self.newendaddr = 0 # 新结束地址
+    self.typename = 'code'
+    self.lplist = [] # 放ldr指令所指向literalpool的列表
 
   def wldrlist(self,addr,mode):
     self.modecheck(mode)
@@ -101,9 +106,10 @@ class codePool(Pool):
     super().displayMsg()
     print('changed?:',self.changebit,'newstartaddr:',self.newstartaddr,'newendaddr',self.newendaddr)
     print('ldraddrlist:',self.ldraddrlist)
+    print('typemane:',self.typename)
     
-def makeliteralpoollist(path):
-  getLdr
 
 if __name__ == '__main__':
   path = 'E:\pythonProject\assembly_code\bzip2.txt'
+  k = codePool(32,43,32)
+  k.displayMsg()
